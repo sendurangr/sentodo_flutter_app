@@ -1,4 +1,4 @@
-package com.example.sentodo_app
+package com.todo.sentodo_app
 
 import io.flutter.embedding.android.FlutterActivity
 
