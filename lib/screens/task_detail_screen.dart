@@ -9,6 +9,14 @@ class TaskDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/edit-task/$taskId');
+            },
+          ),
+        ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Task Detail'),
       ),

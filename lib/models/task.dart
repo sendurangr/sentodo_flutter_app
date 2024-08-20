@@ -4,7 +4,7 @@ class Task {
   final String subtitle;
   bool isDone;
   DateTime targetDate;
-
+  int priority;
 
   Task({
     required this.id,
@@ -12,7 +12,7 @@ class Task {
     required this.subtitle,
     required this.isDone,
     required this.targetDate,
-  });
+      this.priority = 0});
 
   // Convert a Task into a Map.
   Map<String, dynamic> toMap() {
@@ -22,6 +22,7 @@ class Task {
       'subtitle': subtitle,
       'isDone': isDone ? 1 : 0, // SQLite does not support boolean,
       'targetDate': targetDate.toIso8601String(),
+      'priority': priority
     };
   }
 
@@ -33,7 +34,7 @@ class Task {
       subtitle: map['subtitle'],
       isDone: map['isDone'] == 1,
       targetDate: DateTime.parse(map['targetDate']),
-    );
+        priority: map['priority']);
   }
 
 

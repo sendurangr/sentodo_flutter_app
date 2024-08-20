@@ -1,5 +1,6 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
 import '../models/task.dart';
 
 class DatabaseHelper {
@@ -36,7 +37,8 @@ class DatabaseHelper {
         title TEXT,
         subtitle TEXT,
         isDone INTEGER,
-        targetDate TEXT
+        targetDate TEXT,
+        priority INTEGER
       )
     ''');
   }
@@ -61,7 +63,7 @@ class DatabaseHelper {
         subtitle: maps[i]['subtitle'],
         isDone: maps[i]['isDone'] == 1,
         targetDate: DateTime.parse(maps[i]['targetDate']),
-      );
+          priority: maps[i]['priority']);
     });
   }
 
@@ -82,5 +84,10 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  Future<void> deleteAllTasks() async {
+    final db = await database;
+    await db.delete('tasks');
   }
 }
