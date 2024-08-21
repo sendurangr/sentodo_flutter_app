@@ -33,6 +33,7 @@ enum Priority { low, medium, high }
 
 class AddTaskScreen extends ConsumerStatefulWidget {
   final Task? task;
+
   const AddTaskScreen({super.key, this.task});
 
   @override
@@ -52,10 +53,10 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     super.initState();
 
     if (widget.task != null) {
-      _titleController.text = widget.task !.title;
-      _subtitleController.text = widget.task !.subtitle;
+      _titleController.text = widget.task!.title;
+      _subtitleController.text = widget.task!.subtitle;
       _selectedDate = widget.task!.targetDate;
-      _selectedPriority = Priority.values[widget.task !.priority];
+      _selectedPriority = Priority.values[widget.task!.priority];
       formatDate();
     }
   }
@@ -88,7 +89,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       return;
     }
 
-    if (widget.task  != null) {
+    if (widget.task != null) {
       ref.read(provider).updateTask(
             Task(
               id: widget.task!.id,
@@ -134,8 +135,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

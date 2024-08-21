@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'screens/add_task_screen.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -9,7 +8,6 @@ void main() {
 }
 
 class MyTodoApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
