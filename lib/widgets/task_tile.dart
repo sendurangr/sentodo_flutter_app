@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentodo_app/models/task.dart';
+import 'package:sentodo_app/screens/add_task_screen.dart';
 import 'package:sentodo_app/services/app_utils.dart';
+import 'package:sentodo_app/widgets/title_tile/chips.dart';
 
 import '../providers/task_provider.dart';
 
 class CardTile extends ConsumerWidget {
   final Task task;
 
-  const CardTile({super.key, required this.task});
+  CardTile({super.key, required this.task});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PersistentBottomSheetController? _bottomSheetController;
+
     List<Widget> buttonList = <Widget>[
       IconButton(
           onPressed: () {
             ref.read(provider.notifier).deleteTask(task.id);
+            _bottomSheetController?.close();
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('🚀 Task deleted'),
@@ -26,24 +31,27 @@ class CardTile extends ConsumerWidget {
       IconButton(
         onPressed: () {
           ref.read(provider.notifier).toggleTaskDone(task.id);
+          _bottomSheetController?.close();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(task.isDone ? 'Undone' : 'Done'),
+              content: Text(task.isDone ? 'Moved to done' : 'Move to not done'),
             ),
           );
         },
-        icon: const Icon(Icons.check),
+        icon: task.isDone ? const Icon(Icons.report) : const Icon(Icons.check),
       ),
       IconButton(
           onPressed: () {
-            Navigator.of(context)
-                .pushNamed('/edit-task', arguments: {'id': task.id});
+            _bottomSheetController?.close();
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return AddTaskScreen(task: task);
+            }));
           },
           icon: const Icon(Icons.edit)),
     ];
     List<Text> labelList = <Text>[
       const Text('Trash'),
-      Text(task.isDone ? 'Undone' : 'Done'),
+      Text(task.isDone ? 'Not Done' : 'Done'),
       const Text('Edit'),
     ];
 
@@ -87,7 +95,7 @@ class CardTile extends ConsumerWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        showModalBottomSheet(
+                        _bottomSheetController = showBottomSheet(
                           showDragHandle: true,
                           context: context,
                           constraints: const BoxConstraints(maxWidth: 640),
@@ -120,39 +128,11 @@ class CardTile extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Text(
-                        AppUtils.taskPriorityToString(task.priority),
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
+                    PriorityChip(priority: task.priority),
                     const SizedBox(
                       width: 10,
                     ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-                      decoration: BoxDecoration(
-                        color: task.isDone
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.error,
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Text(
-                        AppUtils.doneNotDoneString(task.isDone),
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
+                    IsDoneChip(isDone: task.isDone),
                   ],
                 )
               ],
@@ -161,7 +141,7 @@ class CardTile extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryContainer,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(8.0),
                 bottomRight: Radius.circular(8.0),
@@ -173,16 +153,22 @@ class CardTile extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Text("✏️"),
+                    const Icon(Icons.more_time, size: 18),
                     const SizedBox(width: 8),
-                    Text(AppUtils.formatDateMMMd(task.targetDate)),
+                    Text(
+                      AppUtils.formatDateMMMd(task.createdDate),
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
                 Row(
                   children: [
-                    const Text("🚶‍➡️"),
+                    const Icon(Icons.share_arrival_time_outlined, size: 18),
                     const SizedBox(width: 8),
-                    Text(AppUtils.formatDateMMMd(task.targetDate)),
+                    Text(
+                      AppUtils.formatDateMMMd(task.targetDate),
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
               ],

@@ -55,6 +55,15 @@ class TaskProvider with ChangeNotifier {
     _notifyListeners();
   }
 
+  Future<void> updateTask(Task task) async {
+    final taskIndex = _tasks.indexWhere((t) => t.id == task.id);
+    if (taskIndex >= 0) {
+      _tasks[taskIndex] = task;
+      await DatabaseHelper().updateTask(task);
+      _notifyListeners();
+    }
+  }
+
   Future<void> removeTask(String id) async {
     _tasks.removeWhere((task) => task.id == id);
     await DatabaseHelper().deleteTask(id);
@@ -78,7 +87,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-
   void _notifyListeners() {
     updateTaskStatus();
     notifyListeners();
@@ -94,6 +102,4 @@ class TaskProvider with ChangeNotifier {
     _tasks.clear();
     _notifyListeners();
   }
-
-
 }

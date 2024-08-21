@@ -9,6 +9,7 @@ void main() {
 }
 
 class MyTodoApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
@@ -19,11 +20,9 @@ class MyTodoApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
-      ),
+        ),
         routes: {
-          '/': (ctx) => const HomeScreen(),
-          '/add-task': (ctx) => const AddTaskScreen(),
-          '/edit-task': (ctx) => const AddTaskScreen(),
+          '/': (ctx) => const HomeScreen()
           // Add more routes if needed
         },
       ),

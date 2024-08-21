@@ -3,7 +3,8 @@ class Task {
   final String title;
   final String subtitle;
   bool isDone;
-  DateTime targetDate;
+  final DateTime targetDate;
+  final DateTime createdDate;
   int priority;
 
   Task({
@@ -12,7 +13,9 @@ class Task {
     required this.subtitle,
     required this.isDone,
     required this.targetDate,
-      this.priority = 0});
+    required this.createdDate,
+    this.priority = 0,
+  });
 
   // Convert a Task into a Map.
   Map<String, dynamic> toMap() {
@@ -22,6 +25,7 @@ class Task {
       'subtitle': subtitle,
       'isDone': isDone ? 1 : 0, // SQLite does not support boolean,
       'targetDate': targetDate.toIso8601String(),
+      'createdDate': createdDate.toIso8601String(),
       'priority': priority
     };
   }
@@ -29,13 +33,12 @@ class Task {
   // A method that retrieves a Task from a Map.
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
-      id: map['id'],
-      title: map['title'],
-      subtitle: map['subtitle'],
-      isDone: map['isDone'] == 1,
-      targetDate: DateTime.parse(map['targetDate']),
+        id: map['id'],
+        title: map['title'],
+        subtitle: map['subtitle'],
+        isDone: map['isDone'] == 1,
+        targetDate: DateTime.parse(map['targetDate']),
+        createdDate: DateTime.parse(map['createdDate']),
         priority: map['priority']);
   }
-
-
 }

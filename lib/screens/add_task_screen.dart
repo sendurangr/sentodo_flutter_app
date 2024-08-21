@@ -32,9 +32,8 @@ class _DatePicker extends StatelessWidget {
 enum Priority { low, medium, high }
 
 class AddTaskScreen extends ConsumerStatefulWidget {
-
-
-  const AddTaskScreen({super.key});
+  final Task? task;
+  const AddTaskScreen({super.key, this.task});
 
   @override
   ConsumerState<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -49,6 +48,19 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   final TextEditingController _targetDateController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.task != null) {
+      _titleController.text = widget.task !.title;
+      _subtitleController.text = widget.task !.subtitle;
+      _selectedDate = widget.task!.targetDate;
+      _selectedPriority = Priority.values[widget.task !.priority];
+      formatDate();
+    }
+  }
+
+  @override
   void dispose() {
     _titleController.dispose();
     _subtitleController.dispose();
@@ -60,10 +72,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     _targetDateController.text = AppUtils.formatDateFull(_selectedDate);
   }
 
-  _AddTaskScreenState() {
-    formatDate();
-  }
-
   bool isValidForm() {
     return _titleController.text.isNotEmpty &&
         _subtitleController.text.isNotEmpty &&
@@ -71,25 +79,42 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   }
 
   void _addTask(BuildContext context) {
-    if (isValidForm()) {
+    if (!isValidForm()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all the fields'),
+        ),
+      );
+      return;
+    }
+
+    if (widget.task  != null) {
+      ref.read(provider).updateTask(
+            Task(
+              id: widget.task!.id,
+              title: _titleController.text,
+              isDone: false,
+              subtitle: _subtitleController.text,
+              targetDate: _selectedDate,
+              createdDate: DateTime.now(),
+              priority: _selectedPriority.index,
+            ),
+          );
+    } else {
       ref.read(provider).addTask(
             Task(
               id: DateTime.now().toString(),
               title: _titleController.text,
               isDone: false,
               subtitle: _subtitleController.text,
-              targetDate: DateTime.now(),
+              targetDate: _selectedDate,
+              createdDate: DateTime.now(),
               priority: _selectedPriority.index,
             ),
           );
-      Navigator.of(context).pop();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all the fields'),
-        ),
-      );
     }
+
+    Navigator.of(context).pop();
   }
 
   Future<void> _pickDate(BuildContext context) async {
@@ -109,18 +134,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // get id from route arguments
-    final Object? args = ModalRoute.of(context)!.settings.arguments;
 
-    if (args != null) {
-      final String? id = (args as Map<String, String>)['id'];
-      final Task task = ref.read(provider).tasks.firstWhere((task) => task.id == id);
-      _titleController.text = task.title;
-      _subtitleController.text = task.subtitle;
-      _selectedDate = task.targetDate;
-      _selectedPriority = Priority.values[task.priority];
-      formatDate();
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -164,7 +178,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 keyboardType: TextInputType.datetime,
                 decoration: InputDecoration(
                   suffixIcon: _DatePicker(onPressed: () => _pickDate(context)),
-                  labelText: 'Description',
+                  labelText: 'Target Date',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -189,9 +203,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 selected: <Priority>{_selectedPriority},
                 onSelectionChanged: (Set<Priority> newSelection) {
                   setState(() {
-                    // By default there is only a single segment that can be
-                    // selected at one time, so its value is always the first
-                    // item in the selected set.
                     _selectedPriority = newSelection.first;
                   });
                 },

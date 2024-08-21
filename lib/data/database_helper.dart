@@ -38,6 +38,7 @@ class DatabaseHelper {
         subtitle TEXT,
         isDone INTEGER,
         targetDate TEXT,
+        createdDate TEXT,
         priority INTEGER
       )
     ''');
@@ -58,11 +59,12 @@ class DatabaseHelper {
 
     return List.generate(maps.length, (i) {
       return Task(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        subtitle: maps[i]['subtitle'],
-        isDone: maps[i]['isDone'] == 1,
-        targetDate: DateTime.parse(maps[i]['targetDate']),
+          id: maps[i]['id'],
+          title: maps[i]['title'],
+          subtitle: maps[i]['subtitle'],
+          isDone: maps[i]['isDone'] == 1,
+          targetDate: DateTime.parse(maps[i]['targetDate']),
+          createdDate: DateTime.parse(maps[i]['createdDate']),
           priority: maps[i]['priority']);
     });
   }

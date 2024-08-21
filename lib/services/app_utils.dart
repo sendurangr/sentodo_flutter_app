@@ -6,11 +6,11 @@ class AppUtils {
   }
 
   static String formatDateMMMd(DateTime dateTime) {
-    return DateFormat.MMMd().format(DateTime.now());
+    return '${DateFormat.MMMd().format(dateTime).toUpperCase()} at ${DateFormat.jm().format(dateTime).toUpperCase()}';
   }
 
   static String doneNotDoneString(bool isDone) {
-    return isDone ? '✔️ Done' : '❌ Not Done';
+    return isDone ? 'Done' : 'Not Done';
   }
 
   static String taskPriorityToString(int priority) {
