@@ -123,7 +123,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -158,7 +158,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
               const SizedBox(height: 20),
               TextField(
                 controller: _subtitleController,
-                minLines: 1,
+                minLines: 4,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
